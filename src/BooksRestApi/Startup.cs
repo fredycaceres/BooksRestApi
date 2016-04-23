@@ -7,6 +7,9 @@ using Microsoft.AspNet.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using BooksRestApi.Models;
+using Microsoft.Data.Entity;
+
 
 namespace BooksRestApi
 {
@@ -17,6 +20,7 @@ namespace BooksRestApi
             // Set up configuration sources.
             var builder = new ConfigurationBuilder()
                 .AddJsonFile("appsettings.json");
+            
 
             if (env.IsEnvironment("Development"))
             {
@@ -35,7 +39,9 @@ namespace BooksRestApi
         {
             // Add framework services.
             services.AddApplicationInsightsTelemetry(Configuration);
-
+            var connection = @"Server=localhost;Database=books;Trusted_connection=True;";
+            services.AddEntityFramework().AddSqlServer()
+               .AddDbContext<booksContext>(options => options.UseSqlServer(connection));
             services.AddMvc();
         }
 
@@ -54,6 +60,7 @@ namespace BooksRestApi
             app.UseStaticFiles();
 
             app.UseMvc();
+                        
         }
 
         // Entry point for the application.
